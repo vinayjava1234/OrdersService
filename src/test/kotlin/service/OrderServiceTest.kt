@@ -65,4 +65,29 @@ class OrderServiceTest {
         ordersService.publishOrderStatuses()
     }
 
+    @Test fun checkInventoryUnavailableTest(){
+        var ordersService: OrdersService = OrdersService()
+        var itemList: MutableList<String> = ArrayList<String>();
+        itemList.add("orange")
+        itemList.add("orange")
+        itemList.add("orange")
+        itemList.add("orange")
+        itemList.add("orange")
+        itemList.add("orange")
+        itemList.add("orange")
+        itemList.add("orange")
+        itemList.add("orange")
+        itemList.add("orange")
+        itemList.add("orange")
+        assertEquals(false,ordersService.checkInventory(itemList))
+    }
+
+    @Test fun checkInventoryAvailableTest(){
+        var ordersService: OrdersService = OrdersService()
+        var itemList: MutableList<String> = ArrayList<String>();
+        itemList.add("orange")
+        itemList.add("orange")
+        assertEquals(true,ordersService.checkInventory(itemList))
+    }
+
 }

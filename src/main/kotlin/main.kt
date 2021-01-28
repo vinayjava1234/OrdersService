@@ -1,11 +1,15 @@
 import Constants.Items
+import config.OrderInventory
 import model.Event
 import services.MailServiceSubscriber
 import services.OrdersService
 import java.math.RoundingMode
 import java.text.DecimalFormat
+import kotlin.random.Random
+
 
 fun main() {
+
     println("Hi, Please provide the items you want to order?")
     var itemList: MutableList<String> = ArrayList<String>()
     var applesCount: Int = 0
@@ -45,18 +49,19 @@ fun main() {
 // getting information from user about notifications
     println("Are you willing to get notified about your order status? Y/N")
     var getNotified = readLine()
-    if(getNotified == "Y") {
+    if (getNotified == "Y") {
         val subscriber: MailServiceSubscriber = MailServiceSubscriber()
     }
 
     val ordersService = OrdersService()
     val df = DecimalFormat("#.##")
     df.roundingMode = RoundingMode.DOWN
-    if (!isOfferReddemed.isNullOrEmpty() && isOfferReddemed == "N") {
-        println("Total cost of the Items is ${df.format(ordersService.getTotalCost(itemList, false))}$");
-    } else {
-        println("Total cost of the Items is ${df.format(ordersService.getTotalCost(itemList, true))}$");
+    if (ordersService.checkInventory(itemList)) {
+        if (!isOfferReddemed.isNullOrEmpty() && isOfferReddemed == "N") {
+            println("Total cost of the Items is ${df.format(ordersService.getTotalCost(itemList, false))}$");
+        } else {
+            println("Total cost of the Items is ${df.format(ordersService.getTotalCost(itemList, true))}$");
+        }
     }
-
 
 }

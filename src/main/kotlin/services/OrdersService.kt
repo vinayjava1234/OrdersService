@@ -1,6 +1,7 @@
 package services
 
 import Constants.Items
+import config.OrderInventory
 import mail.MailServer
 import model.Event
 import java.math.RoundingMode
@@ -13,22 +14,35 @@ class OrdersService {
     val serverInstance = MailServer.instance;
 
     open fun getTotalCost(itemList: MutableList<String>, offer: Boolean): Double {
+
+        val appleList = itemList.filter { item -> item.toUpperCase() == Items.APPLE.toString() };
+        val orangeList = itemList.filter { item -> item.toUpperCase() == Items.ORANGE.toString() };
 // Publishing order statuses with 5 sec delay
         publishOrderStatuses()
 
         if (offer) {
-            var appleList: MutableList<String> =
-                itemList.filter { item -> item.toUpperCase() == Items.APPLE.toString() }.toMutableList();
-            val orangeList: MutableList<String> =
-                itemList.filter { item -> item.toUpperCase() == Items.ORANGE.toString() }.toMutableList();
-     // calculating orange cost with 2:3 ratio and apple on buy one get one free bases
-            return (appleList.subList(0, (appleList.size / 2 + appleList.size % 2))
-                .sumByDouble { str -> getSingleItemCost(str) }) + (orangeList.sumByDouble { str -> getSingleItemCost(str) } * 2 / 3)
+            // calculating orange cost with 2:3 ratio and apple on buy one get one free bases
+            return (appleList.toMutableList().subList(0, (appleList.size / 2 + appleList.toMutableList().size % 2))
+                .sumByDouble { str -> getSingleItemCost(str) }) + (orangeList.toMutableList()
+                .sumByDouble { str -> getSingleItemCost(str) } * 2 / 3)
         } else {
             return itemList.sumByDouble { str -> getSingleItemCost(str) }
         }
+    }
 
+    open fun checkInventory(itemList: MutableList<String>): Boolean {
 
+        val orderInventory = OrderInventory()
+        val appleList = itemList.filter { item -> item.toUpperCase() == Items.APPLE.toString() };
+        val orangeList = itemList.filter { item -> item.toUpperCase() == Items.ORANGE.toString() };
+
+        if (appleList.size > orderInventory.getAppleCount() || orangeList.size > orderInventory.getOrangeCount()) {
+            publishStockRanOut()
+            return false
+        } else {
+            orderInventory.reduceInventory(appleList.size, orangeList.size)
+            return true
+        }
     }
 
     fun publishOrderStatuses() {
@@ -40,6 +54,11 @@ class OrdersService {
         serverInstance.sendMessage(event1)
         Thread.sleep(5000)
         serverInstance.sendMessage(event2)
+    }
+
+    fun publishStockRanOut() {
+        var event: Event = Event("NoInventory", "Sorry, Order failed, we are out of items")
+        serverInstance.sendMessage(event)
     }
 
     // method to get single item cost
