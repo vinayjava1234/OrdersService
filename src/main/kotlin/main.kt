@@ -1,4 +1,6 @@
 import Constants.Items
+import model.Event
+import services.MailServiceSubscriber
 import services.OrdersService
 import java.math.RoundingMode
 import java.text.DecimalFormat
@@ -9,6 +11,7 @@ fun main() {
     var applesCount: Int = 0
     var orangesCount: Int = 0
     var isOfferReddemed: String? = null
+
     while (true) {
         val name = readLine()
         if (name.isNullOrEmpty()) {
@@ -21,6 +24,7 @@ fun main() {
             itemList.add(name)
         }
     }
+    // Checking whether ordered items are eligible for offers
     if (applesCount > 1 && orangesCount > 2) {
         println("Do you want to redeem our offer?")
         println("buy one get one free on Apples")
@@ -37,6 +41,12 @@ fun main() {
         println("3 for the price of 2 on Oranges")
         println("Please select, Y/N?")
         isOfferReddemed = readLine()
+    }
+// getting information from user about notifications
+    println("Are you willing to get notified about your order status? Y/N")
+    var getNotified = readLine()
+    if(getNotified == "Y") {
+        val subscriber: MailServiceSubscriber = MailServiceSubscriber()
     }
 
     val ordersService = OrdersService()

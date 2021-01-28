@@ -60,4 +60,9 @@ class OrderServiceTest {
         assertEquals(df.format(0.66f.toDouble() + 1.2f.toDouble()), df.format(ordersService.getTotalCost(itemList,true)));
     }
 
+    @Test fun ordersServicePublishEventsTest(){
+        var ordersService: OrdersService = OrdersService()
+        ordersService.publishOrderStatuses()
+    }
+
 }
