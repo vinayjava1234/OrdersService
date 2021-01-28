@@ -9,9 +9,16 @@ import kotlin.streams.toList
 class OrdersService {
 
 
-    open fun getTotalCost(itemList: MutableList<String>) : Double {
 
-        return itemList.sumByDouble{ str-> getSingleItemCost(str)}
+    open fun getTotalCost(itemList: MutableList<String>, offer: Boolean) : Double {
+        if(offer){
+            var appleList: MutableList<String> = itemList.filter { item-> item.toUpperCase()==Items.APPLE.toString() }.toMutableList();
+            val orrangeList: MutableList<String> = itemList.filter { item-> item.toUpperCase()==Items.ORANGE.toString() }.toMutableList();
+            return (appleList.subList(0,(appleList.size/2+appleList.size%2)).sumByDouble{ str-> getSingleItemCost(str)}) + (orrangeList.sumByDouble{ str-> getSingleItemCost(str)} * 2/3)
+        }else{
+            return itemList.sumByDouble{ str-> getSingleItemCost(str)}
+        }
+
 
     }
 
