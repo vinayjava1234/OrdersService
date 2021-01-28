@@ -11,13 +11,13 @@ fun main() {
         if(name.isNullOrEmpty()){
             break;
         }else{
-            println("adding $name")
             itemList.add(name)
         }
     }
     val ordersService = OrdersService()
     val df = DecimalFormat("#.##")
     df.roundingMode = RoundingMode.DOWN
-    println("Total cost of the Items is ${df.format(itemList.sumByDouble{ str-> ordersService.getSingleItemCost(str)})}$");
+
+    println("Total cost of the Items is ${df.format(ordersService.getTotalCost(itemList))}$");
 
 }
