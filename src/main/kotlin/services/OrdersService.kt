@@ -9,16 +9,13 @@ import kotlin.streams.toList
 class OrdersService {
 
 
-//    open fun getTotalCost(items : List<String>) : String? {
-//
-//        val intItems : List<()->Int?> = items.filter { f -> f != null }.map { str->{
-//            getSingleItemCost(str)
-//        } }.toList()
-//        return "Heloo vinay from Order service"
-//
-//    }
+    open fun getTotalCost(itemList: MutableList<String>) : Double {
 
-    open fun getSingleItemCost(item: String): Double{
+        return itemList.sumByDouble{ str-> getSingleItemCost(str)}
+
+    }
+
+     fun getSingleItemCost(item: String): Double{
 
         if(item.toUpperCase()==Items.ORANGE.toString()){
             return Items.ORANGE.getCostItem().toDouble()
