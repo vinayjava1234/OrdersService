@@ -1,14 +1,14 @@
 package config
 
+import model.Item
+
 object Inventory {
 
-    var min = 3
-    var max = 10
-    var apples = min + (Math.random() * ((max - min) + 1)).toInt()
-    var oranges = min + (Math.random() * ((max - min) + 1)).toInt()
+    var items = mutableListOf<Item>()
 
     init {
-        println("Inventory---> apple count: $apples orange count:$oranges")
+        items.forEach { item->
+            println("Inventory---> ${item.name} count: ${item.count}" ) }
     }
 
 
@@ -16,21 +16,38 @@ object Inventory {
 
 class OrderInventory {
 
-    open fun printInventory(){
-        println("Inventory---> apple count: ${Inventory.apples} orange count:${Inventory.oranges}")
+    open fun printInventory() {
+        Inventory.items.forEach { item->
+            println("Inventory---> ${item.name} count: ${item.count}" ) }
     }
 
-    open fun getAppleCount(): Int {
-        return Inventory.apples
+    open fun getItemCount(name: String): Int {
+       Inventory.items.forEach{item-> if(item.name == name){
+            return item.count
+        } }
+        return 0
     }
 
-    open fun getOrangeCount(): Int {
-        return Inventory.oranges
+
+    open fun reduceInventory(item:Item) {
+        var localItem = Inventory.items.find { itm->  itm.name == item.name }
+        var localItemCount = localItem?.count
+        if (localItemCount != null) {
+            localItemCount = localItemCount - item.count
+            localItem?.count =localItemCount
+        }
     }
 
-    open fun reduceInventory(apple: Int, orange: Int){
-        Inventory.apples = Inventory.apples - apple
-        Inventory.oranges = Inventory.oranges - orange
+    open fun addItem(item: Item) {
+        Inventory.items.add(item)
+
+    }
+
+    open fun getItemCost(name: String): Double{
+        Inventory.items.forEach{item-> if(item.name == name){
+            return item.cost.toDouble()
+        } }
+        return 0f.toDouble()
     }
 
 }

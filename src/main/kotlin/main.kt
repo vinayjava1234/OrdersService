@@ -1,6 +1,9 @@
 import Constants.Items
 import config.OrderInventory
+import kafka.Consumer
 import model.Event
+import model.Item
+import org.apache.kafka.clients.producer.ProducerRecord
 import services.MailServiceSubscriber
 import services.OrdersService
 import java.math.RoundingMode
@@ -8,8 +11,16 @@ import java.text.DecimalFormat
 import kotlin.random.Random
 
 
-fun main() {
+@Synchronized fun main() {
 
+    // Initializing Inventory
+    val orderInventory= OrderInventory()
+    val apple = Item(Items.APPLE.toString(),0.6f.toDouble(),(1+(Math.random()*5).toInt()))
+    val orange = Item(Items.ORANGE.toString(),0.25f.toDouble(),(1+(Math.random()*5).toInt()))
+
+    orderInventory.addItem(apple)
+    orderInventory.addItem(orange)
+    orderInventory.printInventory()
     println("Hi, Please provide the items you want to order?")
     var itemList: MutableList<String> = ArrayList<String>()
     var applesCount: Int = 0
@@ -46,22 +57,8 @@ fun main() {
         println("Please select, Y/N?")
         isOfferReddemed = readLine()
     }
-// getting information from user about notifications
-    println("Are you willing to get notified about your order status? Y/N")
-    var getNotified = readLine()
-    if (getNotified == "Y") {
-        val subscriber: MailServiceSubscriber = MailServiceSubscriber()
-    }
 
     val ordersService = OrdersService()
-    val df = DecimalFormat("#.##")
-    df.roundingMode = RoundingMode.DOWN
-    if (ordersService.checkInventory(itemList)) {
-        if (!isOfferReddemed.isNullOrEmpty() && isOfferReddemed == "N") {
-            println("Total cost of the Items is ${df.format(ordersService.getTotalCost(itemList, false))}$");
-        } else {
-            println("Total cost of the Items is ${df.format(ordersService.getTotalCost(itemList, true))}$");
-        }
-    }
+    ordersService.checkInventoryAndProcessOrder(itemList,(!isOfferReddemed.isNullOrEmpty() && isOfferReddemed == "Y"))
 
 }

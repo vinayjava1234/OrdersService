@@ -62,7 +62,7 @@ class OrderServiceTest {
 
     @Test fun ordersServicePublishEventsTest(){
         var ordersService: OrdersService = OrdersService()
-        ordersService.publishOrderStatuses()
+        ordersService.publishOrderEvents(100f.toDouble())
     }
 
     @Test fun checkInventoryUnavailableTest(){
@@ -79,7 +79,7 @@ class OrderServiceTest {
         itemList.add("orange")
         itemList.add("orange")
         itemList.add("orange")
-        assertEquals(false,ordersService.checkInventory(itemList))
+        assertEquals(false,ordersService.checkInventoryAndProcessOrder(itemList,false))
     }
 
     @Test fun checkInventoryAvailableTest(){
@@ -87,7 +87,7 @@ class OrderServiceTest {
         var itemList: MutableList<String> = ArrayList<String>();
         itemList.add("orange")
         itemList.add("orange")
-        assertEquals(true,ordersService.checkInventory(itemList))
+        assertEquals(true,ordersService.checkInventoryAndProcessOrder(itemList,true))
     }
 
 }

@@ -16,6 +16,7 @@ dependencies {
     testImplementation(kotlin("test-junit"))
     implementation("org.hibernate:hibernate-core:3.6.7.Final")
     api("org.mockito:mockito-core:3.0.0")
+    implementation("org.apache.kafka:kafka-clients:2.0.0")
 }
 tasks.test {
     useJUnit()
